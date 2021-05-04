@@ -12,11 +12,17 @@ window.addEventListener('DOMContentLoaded', async function() {
   
       // - Get the user-entered location from the element's value
       let location = locationInput.value
+
+      // - Get a reference to the element containing the user-entered location
+      let daysInput = document.querySelector(`#days`)
+
+      // - Get the user-entered location from the element's value
+      let days = daysInput.value
   
       // - Check to see if the user entered anything; if so:
-      if (location.length > 0) {
+      if (location.length & days.length > 0) {
         // - Construct a URL to call the WeatherAPI.com API
-        let url = `https://api.weatherapi.com/v1/forecast.json?key=53a0155e46494151b76200952212604&q=${location}&days=3`
+        let url = `https://api.weatherapi.com/v1/forecast.json?key=53a0155e46494151b76200952212604&q=${location}&days=${days}`
   
         // - Fetch the url, wait for a response, store the response in memory
         let response = await fetch(url)
@@ -39,14 +45,31 @@ window.addEventListener('DOMContentLoaded', async function() {
         currentElement.innerHTML = `
           <div class="text-center space-y-2">
             <div class="font-bold text-3xl">Current Weather for ${interpretedLocation.name}, ${interpretedLocation.region}</div>
-            <div class="font-bold">
-              <img src="https://cdn.weatherapi.com/weather/64x64/day/116.png" class="inline-block">
-              <span class="temperature">60</span>° 
+            <div class="font-bold">  
+              <span class="temperature">${currentWeather.temp_f}</span>° 
               and
-              <span class="conditions">Partly Cloudy</span>
+              <span class="conditions">${currentWeather.condition.text}</span>
             </div>
           </div>
         `
+      
+        //  Select element to modify
+        let pagemodifyelement = document.querySelector (`.forecast`)
+
+        //  Empty rides div element
+        pagemodifyelement.innerHTML = `<div class="text-center space-y-8">
+        <div class="font-bold text-3xl">${days} Days Forecast</div>`
+        // Creating a for loop to display daily forecast 
+        for (let i=0; i < days; i++) {
+            pagemodifyelement.insertAdjacentHTML(
+            `beforeend`,
+            `<div>
+              <h1 class="text-2xl text-bold text-gray-500 text-center space-y-8">${dailyForecast.forecastday[i].date}</h1>
+              <h2 class="text-xl text-center space-y-8"> High ${dailyForecast.forecastday[i].day.maxtemp_f} – Low ${dailyForecast.forecastday[i].day.mintemp_f}</h2>
+              <p class="text-gray-500 text-center space-y-8">${dailyForecast.forecastday[i].day.condition.text}</h1>
+            </div>
+            <div>
+            `)}
       }
     })
   })
